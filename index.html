@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraGraph | Profesyonel Matematiksel Analiz</title>
+    <meta name="description" content="Matematiksel fonksiyonları gerçek zamanlı olarak görselleştiren modern bir web uygulaması.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Math.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Image Export Lib -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-row">
+                    <div class="logo">
+                        <i data-lucide="sparkles"></i>
+                        <span>AuraGraph Pro</span>
+                    </div>
+                    <button id="theme-toggle" class="icon-btn" title="Tema Değiştir">
+                        <i data-lucide="sun"></i>
+                    </button>
+                </div>
+                <p>Matematiksel analiz ve görselleştirme platformu.</p>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- 1. Functions -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>FONKSİYONLAR</span>
+                        <button id="add-function-btn" title="Yeni Fonksiyon Ekle">
+                            <i data-lucide="plus"></i>
+                        </button>
+                    </div>
+                    <div id="function-list" class="function-list">
+                        <!-- Function items will be added here -->
+                    </div>
+                </div>
+
+                <!-- 2. Math Toolbar (Moved here) -->
+                <div class="section">
+                    <div class="section-title">HIZLI ARAÇLAR</div>
+                    <div class="math-toolbar">
+                        <button class="math-btn" data-tool="sqrt()">√</button>
+                        <button class="math-btn" data-tool="^2">x²</button>
+                        <button class="math-btn" data-tool="^">xⁿ</button>
+                        <button class="math-btn" data-tool="/">÷</button>
+                        <button class="math-btn" data-tool="sin()">sin</button>
+                        <button class="math-btn" data-tool="cos()">cos</button>
+                        <button class="math-btn" data-tool="tan()">tan</button>
+                        <button class="math-btn" data-tool="log(x, 10)">log</button>
+                        <button class="math-btn" data-tool="ln(x)">ln</button>
+                        <button class="math-btn" data-tool="pi">π</button>
+                    </div>
+                </div>
+
+                <!-- 3. Library (Moved here) -->
+                <div class="section">
+                    <div class="section-title">KÜTÜPHANE</div>
+                    <div class="library-grid">
+                        <button class="lib-btn" data-expr="a*x^2 + b*x + c">Parabol</button>
+                        <button class="lib-btn" data-expr="a*sin(b*x + c)">Sinüs</button>
+                        <button class="lib-btn" data-expr="a * exp(-b * x^2)">Gaussian</button>
+                        <button class="lib-btn" data-expr="log(x, a)">Logaritma</button>
+                    </div>
+                </div>
+
+                <!-- 4. Parameters -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>PARAMETRELER</span>
+                        <i data-lucide="sliders-horizontal" style="width: 14px;"></i>
+                    </div>
+                    <div class="params-container">
+                        <div class="param-item">
+                            <label>a = <span id="val-a">1.0</span></label>
+                            <input type="range" id="param-a" min="-10" max="10" step="0.1" value="1">
+                        </div>
+                        <div class="param-item">
+                            <label>b = <span id="val-b">0.0</span></label>
+                            <input type="range" id="param-b" min="-10" max="10" step="0.1" value="0">
+                        </div>
+                        <div class="param-item">
+                            <label>c = <span id="val-c">0.0</span></label>
+                            <input type="range" id="param-c" min="-10" max="10" step="0.1" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Analysis -->
+                <div class="section">
+                    <div class="stats-container" id="function-stats" style="display: none;">
+                        <div class="section-title">ANALİZ VE ÖZET</div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <span class="stat-label">Tanım Aralığı</span>
+                                <span class="stat-value" id="stat-domain">ℝ</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Y-Kesim</span>
+                                <span class="stat-value" id="stat-y-intercept">-</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Kökler (Tahmini)</span>
+                                <span class="stat-value" id="stat-roots">-</span>
+                            </div>
+                            <div class="stat-card full">
+                                <span class="stat-label">Türev [f'(x)]</span>
+                                <span class="stat-value" id="stat-derivative">-</span>
+                            </div>
+                        </div>
+                        <div id="stat-summary" class="stat-summary"></div>
+                    </div>
+
+                    <div class="settings-container">
+                        <div class="section-title">GÖRÜNÜM VE ÖLÇEK</div>
+                        
+                        <div class="range-inputs">
+                            <div class="range-group">
+                                <label>X Aralığı</label>
+                                <div class="input-row">
+                                    <input type="number" id="xmin" value="-10">
+                                    <input type="number" id="xmax" value="10">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <label>Grid Yoğunluğu</label>
+                            <input type="range" id="grid-density" min="10" max="100" value="50">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label>Çizim Modu</label>
+                            <select id="graph-mode" class="styled-select">
+                                <option value="cartesian">Kartezyen [y=f(x)]</option>
+                                <option value="polar">Polar [r=f(θ)]</option>
+                                <option value="parametric">Parametrik [x(t), y(t)]</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item toggle">
+                            <span>Kritik Noktaları İşaretle</span>
+                            <label class="switch">
+                                <input type="checkbox" id="show-critical-points" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item toggle">
+                            <span>İntegral Alanı Göster</span>
+                            <label class="switch">
+                                <input type="checkbox" id="show-integral">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="sidebar-footer">
+                            <button id="reset-view-btn" class="secondary-btn">
+                                <i data-lucide="refresh-ccw"></i> Sıfırla
+                            </button>
+                            <button id="export-btn" class="primary-btn">
+                                <i data-lucide="image"></i> Görseli Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (Graph) -->
+        <main class="graph-area">
+            <canvas id="graph-canvas"></canvas>
+            
+            <div id="toast-container"></div>
+            
+            <div class="coordinate-display" id="coordinates">
+                x: 0.00, y: 0.00
+            </div>
+
+            <div class="zoom-controls">
+                <button id="zoom-in" title="Yakınlaş"><i data-lucide="zoom-in"></i></button>
+                <button id="zoom-out" title="Uzaklaş"><i data-lucide="zoom-out"></i></button>
+            </div>
+        </main>
+
+        <!-- Help Modal -->
+        <div id="help-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>Klavye Kısayolları</h3>
+                <ul>
+                    <li><b>+/=</b>: Yakınlaştır</li>
+                    <li><b>-</b>: Uzaklaştır</li>
+                    <li><b>R</b>: Görünümü Sıfırla</li>
+                    <li><b>Esc</b>: Seçimi temizle</li>
+                    <li><b>Ok Tuşları</b>: Kaydır</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
