@@ -14,8 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Image Export Lib -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </head>
 <body>
     <div class="app-container">
@@ -60,7 +59,7 @@
                         <button class="math-btn" data-tool="cos()">cos</button>
                         <button class="math-btn" data-tool="tan()">tan</button>
                         <button class="math-btn" data-tool="log(x, 10)">log</button>
-                        <button class="math-btn" data-tool="ln(x)">ln</button>
+                        <button class="math-btn" data-tool="log(x)">ln</button>
                         <button class="math-btn" data-tool="pi">π</button>
                     </div>
                 </div>
@@ -72,7 +71,7 @@
                         <button class="lib-btn" data-expr="a*x^2 + b*x + c">Parabol</button>
                         <button class="lib-btn" data-expr="a*sin(b*x + c)">Sinüs</button>
                         <button class="lib-btn" data-expr="a * exp(-b * x^2)">Gaussian</button>
-                        <button class="lib-btn" data-expr="log(x, a)">Logaritma</button>
+                        <button class="lib-btn" data-expr="log(x, 10)">Logaritma</button>
                     </div>
                 </div>
 
@@ -104,7 +103,7 @@
                         <div class="section-title">ANALİZ VE ÖZET</div>
                         <div class="stats-grid">
                             <div class="stat-card">
-                                <span class="stat-label">Tanım Aralığı</span>
+                                <span class="stat-label">İncelenen X Aralığı</span>
                                 <span class="stat-value" id="stat-domain">ℝ</span>
                             </div>
                             <div class="stat-card">
@@ -126,16 +125,19 @@
                     <div class="settings-container">
                         <div class="section-title">GÖRÜNÜM VE ÖLÇEK</div>
                         
+                        <div class="setting-item toggle"><span>Otomatik kadraj</span><label class="switch"><input type="checkbox" id="auto-fit" aria-label="Otomatik kadraj" checked><span class="slider"></span></label></div>
+                        <p class="setting-hint">X aralığına göre Y ölçeği uyarlanır. Kaydırma ve yakınlaştırma serbest görünüme geçer.</p>
                         <div class="range-inputs">
                             <div class="range-group">
                                 <label>X Aralığı</label>
                                 <div class="input-row">
-                                    <input type="number" id="xmin" value="-10">
-                                    <input type="number" id="xmax" value="10">
+                                    <input type="number" aria-label="X minimum" id="xmin" value="-10">
+                                    <input type="number" aria-label="X maksimum" id="xmax" value="10">
                                 </div>
                             </div>
                         </div>
 
+                        <div class="range-group y-range"><label>Y Aralığı</label><div class="input-row"><input type="number" id="ymin" value="-5" aria-label="Y minimum"><input type="number" id="ymax" value="5" aria-label="Y maksimum"></div></div>
                         <div class="setting-item">
                             <label>Grid Yoğunluğu</label>
                             <input type="range" id="grid-density" min="10" max="100" value="50">
@@ -159,7 +161,7 @@
                         </div>
                         
                         <div class="setting-item toggle">
-                            <span>İntegral Alanı Göster</span>
+                            <span>İntegral Alanı [0, 2]</span>
                             <label class="switch">
                                 <input type="checkbox" id="show-integral">
                                 <span class="slider"></span>
@@ -181,7 +183,10 @@
 
         <!-- Main Content (Graph) -->
         <main class="graph-area">
-            <canvas id="graph-canvas"></canvas>
+            <canvas id="graph-canvas" aria-label="Etkileşimli fonksiyon grafiği"></canvas>
+            <div class="graph-header"><div><span class="eyebrow">MATEMATİĞİ KEŞFET</span><h1 id="mode-label">Kartezyen düzlem</h1></div><span id="view-badge">OTOMATİK KADRAJ</span></div>
+            <div id="graph-message" role="status" aria-live="polite"></div>
+            <div class="graph-hint">Sürükle · Kaydır &nbsp; / &nbsp; Tekerlek · Yakınlaş &nbsp; / &nbsp; F · Ekrana sığdır</div>
             
             <div id="toast-container"></div>
             
@@ -189,7 +194,7 @@
                 x: 0.00, y: 0.00
             </div>
 
-            <div class="zoom-controls">
+            <div class="zoom-controls"><button id="fit-view-btn" title="Ekrana sığdır (F)" aria-label="Ekrana sığdır"><i data-lucide="scan"></i></button>
                 <button id="zoom-in" title="Yakınlaş"><i data-lucide="zoom-in"></i></button>
                 <button id="zoom-out" title="Uzaklaş"><i data-lucide="zoom-out"></i></button>
             </div>

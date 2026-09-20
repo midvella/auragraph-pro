@@ -70,3 +70,19 @@ Bu proje **MIT Lisansı** altında lisanslanmıştır. Daha fazla bilgi için [L
 
 ---
 *Gelistiren: midvella*
+
+## Akıllı kadraj ve akıcı çizim
+
+- Otomatik kadraj, Kartezyen modda seçili X aralığını koruyarak görünür fonksiyonlara göre Y aralığını büyütür veya küçültür. Polar ve parametrik modlarda iki eksen birlikte sığdırılır; geometrik oran korunur.
+- Tekerlek imlecin bulunduğu noktaya doğru yakınlaştırır. Sürükleme veya yakınlaştırma otomatik kadrajı kapatır; **F**, çift tıklama veya **Ekrana sığdır** düğmesi yeniden açar.
+- X ve Y aralıkları elle girilebilir. Y aralığını elle değiştirmek serbest görünüme geçirir.
+- Parametrik mod ilk iki ifadeyi sırasıyla `x(t)` ve `y(t)` olarak kullanır; örnek: `cos(t)` ve `sin(t)`. Parametre aralığı `[-10, 10]`, polar açı aralığı `[0, 4π]` olur.
+- İfadeler yalnızca değişince derlenir. Çizim kareleri birleştirilir; fare takibinde önbellekteki grafik kullanılır. Örnekleme sayısı ve fonksiyon sayısı (12) sınırlıdır.
+- Kökler ve kritik noktalar seçili eğri için görünür X aralığında sayısal tahminlerdir. Çok dar veya hızlı salınan detaylar atlanabilir. Asimptotların kadrajı aşırı büyütmesini azaltmak için uç değerler sınırlandırılır.
+- Telefonlarda grafik üstte, kaydırılabilir kontroller altta gösterilir. PNG çıktısı ekran piksel yoğunluğunda, en fazla 2× çözünürlükte üretilir.
+
+Kadraj regresyon testleri (Node.js):
+
+```bash
+node --test tests/viewport.test.cjs
+```
